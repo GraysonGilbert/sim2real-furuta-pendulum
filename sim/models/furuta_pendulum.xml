@@ -1,5 +1,5 @@
 <mujoco model="furuta_pendulum">
-  <compiler angle="radian" meshdir="meshes/"/>
+  <compiler angle="radian" meshdir="../meshes/"/>
   <option timestep="0.001" iterations="50" solver="Newton" tolerance="1e-10" integrator="implicit"/>
 
   <asset>
