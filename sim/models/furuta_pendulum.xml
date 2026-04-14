@@ -43,4 +43,12 @@
     <motor name="arm_motor" joint="bldc_rotor_joint" gear="0.306" ctrlrange="-1.5 1.5" ctrllimited="true"/>
   </actuator>
 
+  <sensor>
+    <jointpos name="rotor_angle" joint="bldc_rotor_joint"/>
+    <jointvel name="rotor_vel" joint="bldc_rotor_joint"/>
+    
+    <jointpos name="pendulum_angle" joint="8mm_rod_joint"/>
+    <jointvel name="pendulum_vel" joint="8mm_rod_joint"/>
+  </sensor>
+
 </mujoco>
