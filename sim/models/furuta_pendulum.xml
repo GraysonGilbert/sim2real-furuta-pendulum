@@ -22,20 +22,21 @@
 
     <body name="rotor_link" pos="0 0 0.16509" quat="-2.6569e-06 -0.723319 -0.690514 -2.5364e-06">
       
-      <joint name="rotor_joint" pos="0 0 0" axis="0 0 1" damping="0.000378" armature="0.0000137" frictionloss="0.00353"/>
+      <joint name="rotor_joint" pos="0 0 0" axis="0 0 1" damping="0.0025" armature="0.0005" frictionloss="0.0025"/>
       
-      <geom type="mesh" contype="0" conaffinity="0" group="1" density="2700" rgba="0.094118 0.396078 0.592157 1" mesh="rotor_link"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="1" mass="0.005" rgba="0.094118 0.396078 0.592157 1" mesh="rotor_link"/>
       <geom type="mesh" contype="0" conaffinity="0" rgba="0.094118 0.396078 0.592157 1" mesh="rotor_link"/>
 
-      <geom pos="0.00052307 0 -0.020976" quat="1.34925e-11 3.67321e-06 1 3.67321e-06" type="mesh" contype="0" conaffinity="0" group="1" density="2700" rgba="0.094118 0.396078 0.592157 1" mesh="rotating_base_link"/>
+      <geom pos="0.00052307 0 -0.020976" quat="1.34925e-11 3.67321e-06 1 3.67321e-06" type="mesh" contype="0" conaffinity="0" group="1" mass="0.075" rgba="0.094118 0.396078 0.592157 1" mesh="rotating_base_link"/>
       <geom pos="0.00052307 0 -0.020976" quat="1.34925e-11 3.67321e-06 1 3.67321e-06" type="mesh" contype="0" conaffinity="0" rgba="0.094118 0.396078 0.592157 1" mesh="rotating_base_link"/>
       
       <body name="pendulum_link" pos="5.95127e-07 0.0810093 -0.0546994" quat="3.67321e-06 -1 0 -2.69849e-11">
+        <inertial mass="0.2" pos="0 0 -0.115" diaginertia="0.00004 0.00004 0.00001"/>
+        <!-- <joint name="pendulum_joint" pos="0 0 0" axis="0 1 0" damping="0.0006" frictionloss="0.0005" armature="0.000001" stiffness="0" ref="3.14159265"/> -->
+        <joint name="pendulum_joint" pos="0 0 0" axis="0 1 0" damping="0.0005" frictionloss="0.0008"  armature="0.00001" stiffness="0" ref="3.14159265"/>
       
-        <joint name="pendulum_joint" pos="0 0 0" axis="0 1 0" damping="0.0006" frictionloss="0.0005" armature="0.000001" stiffness="0" ref="3.14159265"/>
-      
-        <geom type="mesh" contype="0" conaffinity="0" group="1" density="7850" rgba="0.792157 0.819608 0.933333 1" mesh="pendulum_link"/>
-        <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="pendulum_link"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.792157 0.819608 0.933333 1" mesh="pendulum_link"/>
+        <geom type="mesh" contype="0" conaffinity="0" rgba="0.792157 0.819608 0.933333 1" mesh="pendulum_link"/>
       </body>
     </body>
   </worldbody>
