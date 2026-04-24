@@ -18,12 +18,11 @@ def main():
     parser.add_argument(
         "--mode", 
         type=str, 
-        choices=["balance", "swingup"], 
+        choices=["balance", "swing_up"], 
         default="balance",
-        help="Choose the task mode: 'balance' or 'swingup'. Default is 'balance'."
+        help="Choose the task mode: 'balance' or 'swing_up'. Default is 'balance'."
     )
     
-    # Argument for just the filename (saves you typing the directory)
     parser.add_argument(
         "--model_name", 
         type=str, 
@@ -31,7 +30,6 @@ def main():
         help="Name of the model file (e.g., 'my_model.zip'). Assumes it is located in the ./saved_models/ directory."
     )
 
-    # Argument for an exact, full path (if you save models somewhere else)
     parser.add_argument(
         "--model_path", 
         type=str, 
@@ -55,10 +53,10 @@ def main():
         if args.mode == "balance":
             model_path = "./saved_models/ppo_furuta_balance_final.zip"
         else:
-            model_path = "./saved_models/ppo_furuta_swingup_final.zip"
+            model_path = "./saved_models/ppo_furuta_swing_up_final.zip"
 
     # 1. Load the Environment
-    env = FurutaPendulumEnv()
+    env = FurutaPendulumEnv(mode=args.mode)
     
     # 2. Load the Trained Model
     print(f"--- Initialization ---")
@@ -98,7 +96,10 @@ def main():
                 obs, info = env.reset()
                 
             # E. Maintain real-time speed so it doesn't look like a blur
-            time_until_next_step = env.model.opt.timestep - (time.time() - step_start)
+            
+            physics_dt = env.model.opt.timestep * env.frame_skip
+            time_until_next_step = physics_dt - (time.time() - step_start)
+        
             if time_until_next_step > 0:
                 time.sleep(time_until_next_step)
 
