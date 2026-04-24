@@ -32,7 +32,7 @@
       
       <body name="pendulum_link" pos="5.95127e-07 0.0810093 -0.0546994" quat="3.67321e-06 -1 0 -2.69849e-11">
         <inertial mass="0.2" pos="0 0 -0.115" diaginertia="0.00004 0.00004 0.00001"/>
-        <!-- <joint name="pendulum_joint" pos="0 0 0" axis="0 1 0" damping="0.0006" frictionloss="0.0005" armature="0.000001" stiffness="0" ref="3.14159265"/> -->
+  
         <joint name="pendulum_joint" pos="0 0 0" axis="0 1 0" damping="0.0005" frictionloss="0.0008"  armature="0.00001" stiffness="0" ref="3.14159265"/>
       
         <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.792157 0.819608 0.933333 1" mesh="pendulum_link"/>
