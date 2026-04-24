@@ -1,54 +1,56 @@
 <mujoco model="furuta_pendulum">
   <compiler angle="radian" meshdir="../meshes/"/>
+
   <option timestep="0.001" iterations="50" solver="Newton" tolerance="1e-10" integrator="implicit"/>
 
   <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.1 0.1 0.1" rgb2="0.02 0.02 0.02" width="512" height="512"/>
+    <texture name="texplane" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" type="2d" width="512" height="512" mark="edge" markrgb=".8 .8 .8"/>  
+    <material name="matplane" reflectance="0" texture="texplane" texrepeat="1 1" texuniform="true"/>
+    
     <mesh name="base_link" content_type="model/stl" file="base_link.STL"/>
-    <mesh name="bldc_rotor_link" content_type="model/stl" file="bldc_rotor_link.STL"/>
-    <mesh name="8mm_rod_link" content_type="model/stl" file="8mm_rod_link.STL"/>
-    <mesh name="rod_coupler_link" content_type="model/stl" file="rod_coupler_link.STL"/>
-    <mesh name="12mm_rod_link" content_type="model/stl" file="12mm_rod_link.STL"/>
+    <mesh name="rotor_link" content_type="model/stl" file="rotor_link.STL"/>
+    <mesh name="rotating_base_link" content_type="model/stl" file="rotating_base_link.STL"/>
+    <mesh name="pendulum_link" content_type="model/stl" file="pendulum_link.STL"/>
   </asset>
 
   <worldbody>
-    <body name="mounting_plate" pos="0 0 0" euler="-1.5708 0 0">
-    
-      <geom type="mesh" contype="0" conaffinity="0" group="1" density="2700" rgba="0.596078 0.666667 0.686275 1" mesh="base_link"/>
-      <geom type="mesh" contype="0" conaffinity="0" rgba="0.596078 0.666667 0.686275 1" mesh="base_link"/>
+    <light directional="true" diffuse=".6 .6 .6" specular="0.2 0.2 0.2" pos="3 0 2" dir="-3 0 -2" castshadow="false"/>
 
-      <body name="bldc_rotor_link" pos="0.0024927 -0.16559 0.12189" quat="-0.443223 0.443217 0.550962 0.550956">
-       
-        <joint name="bldc_rotor_joint" type="hinge" pos="0 0 0" axis="0 0 1" damping="0.000378" armature="0.0000137" frictionloss="0.005"/>
+    <geom type="mesh" contype="0" conaffinity="0" group="1" density="2700" rgba="0.094118 0.396078 0.592157 1" mesh="base_link"/>
+    <geom type="mesh" contype="0" conaffinity="0" rgba="0.094118 0.396078 0.592157 0.8" mesh="base_link"/>
 
-        <geom type="mesh" contype="0" conaffinity="0" group="1" density="2700" rgba="0.2 0.2 0.2 1" mesh="bldc_rotor_link"/>
-        <geom type="mesh" contype="0" conaffinity="0" rgba="0.2 0.2 0.2 1" mesh="bldc_rotor_link"/>
-
-        <body name="8mm_rod_link" pos="0 0 -0.0547" quat="-0.432899 -0.559104 -0.55911 0.432894">
+    <body name="rotor_link" pos="0 0 0.16509" quat="-2.6569e-06 -0.723319 -0.690514 -2.5364e-06">
       
-          <joint name="8mm_rod_joint" type="hinge" pos="0 0 0" axis="0 1 0" damping="0.0006" frictionloss="0.0005" armature="0.000001" stiffness="0"/>
-          
-          <geom type="mesh" contype="0" conaffinity="0" group="1" density="7850" rgba="0.67451 0.215686 0.0705882 1" mesh="8mm_rod_link"/>
-          <geom type="mesh" contype="0" conaffinity="0" rgba="0.67451 0.215686 0.0705882 1" mesh="8mm_rod_link"/>
-          <geom pos="0 0.039535 0" quat="-0.0892309 -0.0892254 -0.701456 0.701453" type="mesh" contype="0" conaffinity="0" group="1" density="1050" rgba="0.596078 0.666667 0.686275 1" mesh="rod_coupler_link"/>
-          <geom pos="0 0.039535 0" quat="-0.0892309 -0.0892254 -0.701456 0.701453" type="mesh" contype="0" conaffinity="0" rgba="0.596078 0.666667 0.686275 1" mesh="rod_coupler_link"/>
-          <geom pos="-2.72493e-07 0.0725004 1.17232e-07" quat="0.615771 -0.182371 -0.347606 -0.683182" type="mesh" contype="0" conaffinity="0" group="1" density="7850" rgba="0.67451 0.215686 0.0705882 1" mesh="12mm_rod_link"/>
-          <geom pos="-2.72493e-07 0.0725004 1.17232e-07" quat="0.615771 -0.182371 -0.347606 -0.683182" type="mesh" contype="0" conaffinity="0" rgba="0.67451 0.215686 0.0705882 1" mesh="12mm_rod_link"/>
-       
-        </body>
+      <joint name="rotor_joint" pos="0 0 0" axis="0 0 1" damping="0.000378" armature="0.0000137" frictionloss="0.00353"/>
+      
+      <geom type="mesh" contype="0" conaffinity="0" group="1" density="2700" rgba="0.094118 0.396078 0.592157 1" mesh="rotor_link"/>
+      <geom type="mesh" contype="0" conaffinity="0" rgba="0.094118 0.396078 0.592157 1" mesh="rotor_link"/>
+
+      <geom pos="0.00052307 0 -0.020976" quat="1.34925e-11 3.67321e-06 1 3.67321e-06" type="mesh" contype="0" conaffinity="0" group="1" density="2700" rgba="0.094118 0.396078 0.592157 1" mesh="rotating_base_link"/>
+      <geom pos="0.00052307 0 -0.020976" quat="1.34925e-11 3.67321e-06 1 3.67321e-06" type="mesh" contype="0" conaffinity="0" rgba="0.094118 0.396078 0.592157 1" mesh="rotating_base_link"/>
+      
+      <body name="pendulum_link" pos="5.95127e-07 0.0810093 -0.0546994" quat="3.67321e-06 -1 0 -2.69849e-11">
+      
+        <joint name="pendulum_joint" pos="0 0 0" axis="0 1 0" damping="0.0006" frictionloss="0.0005" armature="0.000001" stiffness="0" ref="3.14159265"/>
+      
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="7850" rgba="0.792157 0.819608 0.933333 1" mesh="pendulum_link"/>
+        <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="pendulum_link"/>
       </body>
-   </body>
+    </body>
   </worldbody>
 
   <actuator>
-    <motor name="arm_motor" joint="bldc_rotor_joint" gear="0.306" ctrlrange="-1.5 1.5" ctrllimited="true"/>
+    <motor name="arm_motor" joint="rotor_joint" gear="0.353" ctrlrange="-1.5 1.5" ctrllimited="true"/>
   </actuator>
 
   <sensor>
-    <jointpos name="rotor_angle" joint="bldc_rotor_joint"/>
-    <jointvel name="rotor_vel" joint="bldc_rotor_joint"/>
+    <jointpos name="rotor_angle" joint="rotor_joint"/>
+    <jointvel name="rotor_vel" joint="rotor_joint"/>
     
-    <jointpos name="pendulum_angle" joint="8mm_rod_joint"/>
-    <jointvel name="pendulum_vel" joint="8mm_rod_joint"/>
+    <jointpos name="pendulum_angle" joint="pendulum_joint"/>
+    <jointvel name="pendulum_vel" joint="pendulum_joint"/>
   </sensor>
+
 
 </mujoco>
