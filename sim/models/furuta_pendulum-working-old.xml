@@ -1,0 +1,49 @@
+<mujoco model="furuta_pendulum">
+  <compiler angle="radian" meshdir="../meshes/"/>
+  <option timestep="0.001" iterations="50" solver="Newton" tolerance="1e-10" integrator="implicit"/>
+
+  <asset>
+    <mesh name="base_link" content_type="model/stl" file="base_link.STL"/>
+    <mesh name="bldc_rotor_link" content_type="model/stl" file="bldc_rotor_link.STL"/>
+    <mesh name="pendulum_link" content_type="model/stl" file="pendulum_link.STL"/>
+  </asset>
+
+  <worldbody>
+    <geom type="mesh" contype="0" conaffinity="0" group="1" density="2700" rgba="0.596078 0.666667 0.686275 1" mesh="base_link"/>
+    <geom type="mesh" contype="0" conaffinity="0" rgba="0.596078 0.666667 0.686275 1" mesh="base_link"/>
+
+    <body name="bldc_rotor_link" pos="0 0 0.16509" quat="1.34924e-11 3.67321e-06 1 3.67321e-06">
+
+      <!-- <inertial pos="-1.69848e-08 0.000649805 -0.0346758" quat="0.494822 0.505124 -0.505112 0.494837" mass="0.111168" diaginertia="0.000110381 9.39985e-05 5.33888e-05"/> -->
+      
+      <joint name="bldc_rotor_joint" pos="0 0 0" axis="0 0 1" damping="0.000378" armature="0.0000137" frictionloss="0.005"/>
+      
+      <geom type="mesh" contype="0" conaffinity="0" group="1" density="2700" rgba="0.2 0.2 0.2 1" mesh="bldc_rotor_link"/>
+      <geom type="mesh" contype="0" conaffinity="0" rgba="0.2 0.2 0.2 1" mesh="bldc_rotor_link"/>
+      
+      <body name="pendulum_link" pos="0 0 -0.0547" quat="-3.67321e-06 0 0 -1">
+        
+        <!-- <inertial pos="-3.24266e-09 -0.0736717 0.043089" quat="0.999964 0.00853455 0 0" mass="0.0329569" diaginertia="4.43065e-05 3.91743e-05 6.04616e-06"/> -->
+        
+        <joint name="pendulum_joint" pos="0 0 0" axis="0 1 0" damping="0.0006" frictionloss="0.0005" armature="0.000001" stiffness="0" ref="3.14159265"/>
+        
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="7850" rgba="0.694118 0.0980392 0.0980392 1" mesh="pendulum_link"/>
+        
+        <geom type="mesh" rgba="0.694118 0.0980392 0.0980392 1" mesh="pendulum_link"/>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="arm_motor" joint="bldc_rotor_joint" gear="0.306" ctrlrange="-1.5 1.5" ctrllimited="true"/>
+  </actuator>
+
+  <sensor>
+    <jointpos name="rotor_angle" joint="bldc_rotor_joint"/>
+    <jointvel name="rotor_vel" joint="bldc_rotor_joint"/>
+    
+    <jointpos name="pendulum_angle" joint="pendulum_joint"/>
+    <jointvel name="pendulum_vel" joint="pendulum_joint"/>
+  </sensor>
+
+</mujoco>
