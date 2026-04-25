@@ -1,5 +1,6 @@
 import os
 import sys
+import csv
 import time
 import argparse
 import mujoco.viewer
@@ -75,33 +76,43 @@ def main():
 
     print("\nLaunching MuJoCo Viewer. Press ESC to exit.")
     
-    # 4. Launch the MuJoCo interactive viewer
-    with mujoco.viewer.launch_passive(env.model, env.data) as viewer:
-        
-        while viewer.is_running():
-            step_start = time.time()
+    with open('sim_debug_data.csv', mode='w', newline='') as log_file:
+        csv_writer = csv.writer(log_file)
+        csv_writer.writerow(["Time_ms", "Obs0", "Obs1", "Obs2", "Obs3", "Obs4", "Obs5", "Action"])
+    
+        # 4. Launch the MuJoCo interactive viewer
+        with mujoco.viewer.launch_passive(env.model, env.data) as viewer:
             
-            # A. Ask the Neural Network for the best action based on current sensors
-            action, _states = model.predict(obs, deterministic=True)
-            
-            # B. Step the environment physics forward using that action
-            obs, reward, terminated, truncated, info = env.step(action)
-            
-            # C. Update the visualizer
-            viewer.sync()
-            
-            # D. If it fails (spins out of control/falls), reset it and try again
-            if terminated or truncated:
-                print("Episode terminated. Resetting...")
-                obs, info = env.reset()
+            while viewer.is_running():
+                step_start = time.time()
                 
-            # E. Maintain real-time speed so it doesn't look like a blur
+                # A. Ask the Neural Network for the best action based on current sensors
+                action, _states = model.predict(obs, deterministic=True)
+                
+                sim_time_ms = int(env.data.time * 1000)
+                
+                scaled_action = float(action[0]) * env.max_current
+                
+                csv_writer.writerow([sim_time_ms, obs[0], obs[1], obs[2], obs[3], obs[4], obs[5], scaled_action])
+                
+                # B. Step the environment physics forward using that action
+                obs, reward, terminated, truncated, info = env.step(action)
+                
+                # C. Update the visualizer
+                viewer.sync()
+                
+                # D. If it fails (spins out of control/falls), reset it and try again
+                if terminated or truncated:
+                    print("Episode terminated. Resetting...")
+                    obs, info = env.reset()
+                    
+                # E. Maintain real-time speed so it doesn't look like a blur
+                
+                physics_dt = env.model.opt.timestep * env.frame_skip
+                time_until_next_step = physics_dt - (time.time() - step_start)
             
-            physics_dt = env.model.opt.timestep * env.frame_skip
-            time_until_next_step = physics_dt - (time.time() - step_start)
-        
-            if time_until_next_step > 0:
-                time.sleep(time_until_next_step)
+                if time_until_next_step > 0:
+                    time.sleep(time_until_next_step)
 
 if __name__ == "__main__":
     main()
