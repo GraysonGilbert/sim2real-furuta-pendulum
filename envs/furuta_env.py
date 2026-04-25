@@ -48,9 +48,6 @@ class FurutaPendulumEnv(gym.Env):
         for _ in range(self.frame_skip):
             mujoco.mj_step(self.model, self.data)
         
-        # Step the MuJoCo physics
-        # mujoco.mj_step(self.model, self.data)
-        
         rotor_pos_raw = self.data.sensor('rotor_angle').data[0]
         rotor_vel_raw = self.data.sensor('rotor_vel').data[0]
         pend_pos_raw = self.data.sensor('pendulum_angle').data[0]
@@ -96,7 +93,6 @@ class FurutaPendulumEnv(gym.Env):
         if self.mode == "balance":
             initial_pend_angle = self.np_random.uniform(-0.15, 0.15)
         elif self.mode == "swing_up":
-            # initial_pend_angle = self.np_random.uniform(-np.pi, np.pi)
             initial_pend_angle = np.pi + self.np_random.uniform(-0.1, 0.1)
             
         self.data.qpos[1] = initial_pend_angle
@@ -130,7 +126,6 @@ class FurutaPendulumEnv(gym.Env):
         noisy_pend_vel = pend_vel_raw + self.np_random.normal(0, pend_noise_scale)
         
         MAX_ROTOR_POS = 4 * np.pi   # Defined by termination limits
-        # MAX_PEND_POS = np.pi        # Max possible value after wrapping
         MAX_ROTOR_VEL = 50.0        # rad/s
         MAX_PEND_VEL = 50.0         # rad/s
         
@@ -176,7 +171,7 @@ class FurutaPendulumEnv(gym.Env):
             centering_penalty = 0.01 * (rotor_pos ** 2)
             
             momentum_bonus = np.clip(0.1 * abs(pend_vel), 0.0, 0.8) # was 1.5
-            swing_base_vel_penalty = 0.01 * (rotor_vel ** 2)
+            swing_base_vel_penalty = 0.05 * (rotor_vel ** 2)
             
             catch_vel_penalty = 0.02 * (pend_vel ** 2) + 0.05 * (rotor_vel ** 2)
             
@@ -210,7 +205,7 @@ class FurutaPendulumEnv(gym.Env):
         rotor_pos, _, pendulum_pos, _ = raw_state
         
         # HARDWARE SAFETY: Fail if the base spins more than 2 full rotations
-        base_out_of_bounds = abs(rotor_pos) > (4 * np.pi)
+        base_out_of_bounds = abs(rotor_pos) > (1.5 * np.pi)
         
         if self.mode == "balance":
             task_failed = abs(pendulum_pos) > (0.2618)
