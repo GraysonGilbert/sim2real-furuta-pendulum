@@ -37,7 +37,7 @@ class DeathTrackerCallback(BaseCallback):
         self.pendulum_drop_deaths = 0
 
     def _on_step(self) -> bool:
-        # Loop through the vectorized environments (even if it's just DummyVecEnv of 1)
+    
         for i in range(len(self.locals["dones"])):
             if self.locals["dones"][i]:
                 info = self.locals["infos"][i]
@@ -88,10 +88,8 @@ if __name__ == "__main__":
     
     print(f"--- Starting Training in {args.mode.upper()} Mode ---")
     
-
     num_cpu = 10
     
-    # vec_env = make_vec_env(make_env, n_envs=num_cpu, vec_env_cls=SubprocVecEnv)
     vec_env = SubprocVecEnv([make_env(args.mode) for _ in range(num_cpu)])
     
     # 100,000 steps across all cpus
@@ -113,20 +111,14 @@ if __name__ == "__main__":
                     tensorboard_log=LOG_DIR,
                     learning_rate=linear_schedule(0.0001),
                     n_steps=2048,
-                    batch_size=2048, # was 256
-                    n_epochs=10, # was 40
+                    batch_size=2048,
+                    n_epochs=10, 
                     ent_coef=0.005,
-                    clip_range=0.2,# was 0.05
+                    clip_range=0.2,
                     device="cpu"
                     )
     
     elif args.mode == "swing_up":
-        # if not args.load_model_dir:
-            # raise ValueError("CRITICAL: You must provide --load_model_dir to load the Phase 1 model weights.")
-        
-        # model_path = os.path.join(args.load_model_dir, "ppo_furuta_balance_final.zip")
-        # print(f"Loading pre-trained balance model from {model_path}...")
-        # model_path = args.load_model_dir
         
         print("Initializing new PPO model with random weights...")
         model = PPO("MlpPolicy",
@@ -135,16 +127,16 @@ if __name__ == "__main__":
                     tensorboard_log=LOG_DIR,
                     learning_rate=linear_schedule(0.0003),
                     n_steps=2048,
-                    batch_size=2048, # was 256
-                    n_epochs=10, # was 40
+                    batch_size=2048,
+                    n_epochs=10,
                     ent_coef=0.03,
-                    clip_range=0.2,# was 0.05
+                    clip_range=0.2,
                     device="cpu"
                     )
         
     
     print(f"Beginning Training on {num_cpu} cores...")
-    model.learn(total_timesteps=50_000_000,
+    model.learn(total_timesteps=20_000_000,
                 callback=callback_list,
                 tb_log_name=f"PPO_{args.mode.capitalize()}_Single_{epoch_time}"
                 )
