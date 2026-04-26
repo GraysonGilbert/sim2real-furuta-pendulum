@@ -12,6 +12,10 @@ from stable_baselines3 import PPO
 from envs.furuta_env import FurutaPendulumEnv
 
 def main():
+    
+    BASE_RL_FILEPATH = "../rl/"
+    BASE_SIM_FILEPATH = "../sim/"
+    
     # Set up argument parsing
     parser = argparse.ArgumentParser(description="Evaluate a trained Furuta Pendulum PPO model.")
     
@@ -45,16 +49,16 @@ def main():
         model_path = args.model_path
     elif args.model_name:
         # Automatically point to the saved_models directory
-        model_path = os.path.join("./saved_models", args.model_name)
+        model_path = os.path.join(BASE_RL_FILEPATH + "saved_models", args.model_name)
         # Automatically append .zip if you forget to type it in the command line
         if not model_path.endswith('.zip'):
             model_path += '.zip'
     else:
         # Fallback to the defaults based on the mode
         if args.mode == "balance":
-            model_path = "./saved_models/ppo_furuta_balance_final.zip"
+            model_path = BASE_RL_FILEPATH + "saved_models/ppo_furuta_balance_final.zip"
         else:
-            model_path = "./saved_models/ppo_furuta_swing_up_final.zip"
+            model_path = BASE_RL_FILEPATH + "saved_models/ppo_furuta_swing_up_final.zip"
 
     # 1. Load the Environment
     env = FurutaPendulumEnv(mode=args.mode)
@@ -76,7 +80,7 @@ def main():
 
     print("\nLaunching MuJoCo Viewer. Press ESC to exit.")
     
-    with open('sim_debug_data.csv', mode='w', newline='') as log_file:
+    with open(BASE_SIM_FILEPATH + 'hw_sim_debug/sim_debug_data.csv', mode='w', newline='') as log_file:
         csv_writer = csv.writer(log_file)
         csv_writer.writerow(["Time_ms", "Obs0", "Obs1", "Obs2", "Obs3", "Obs4", "Obs5", "Action"])
     

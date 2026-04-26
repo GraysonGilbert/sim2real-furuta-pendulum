@@ -96,7 +96,7 @@ void encoder_cal(AS5047P encoder)
     avg_raw_angle += 360.0f;
   }
 
-  pend_angle_offset = 180.0f - avg_raw_angle;
+  pend_angle_offset = 180.0f + avg_raw_angle;
   Serial.printf("Calibration complete. Rest angle: %.2f deg, Offset applied %.2f\n", avg_raw_angle, pend_angle_offset);
 }
 

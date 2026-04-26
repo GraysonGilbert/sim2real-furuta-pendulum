@@ -2,7 +2,7 @@ import mujoco.viewer
 import mujoco
 
 # Load your new XML
-model = mujoco.MjModel.from_xml_path("models/furuta_pendulum.xml")
+model = mujoco.MjModel.from_xml_path("../sim/models/furuta_pendulum.xml")
 
 data = mujoco.MjData(model)
 

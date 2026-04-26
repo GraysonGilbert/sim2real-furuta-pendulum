@@ -16,7 +16,7 @@ from gymnasium.wrappers import TimeLimit
 from envs.furuta_env import FurutaPendulumEnv
 
 
-LOG_DIR = "./logs/"
+LOG_DIR = "../rl/logs/"
 os.makedirs(LOG_DIR, exist_ok=True)
 
 
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     epoch_time = str(int(time.time()))
-    MODEL_DIR = f"./saved_models/{args.mode}_{epoch_time}/"
+    MODEL_DIR = f"../rl/saved_models/{args.mode}_{epoch_time}/"
     os.makedirs(MODEL_DIR, exist_ok=True)
     
     print(f"--- Starting Training in {args.mode.upper()} Mode ---")

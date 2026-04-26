@@ -3,8 +3,9 @@ import numpy as np
 from stable_baselines3 import PPO
 
 """----- Modify Model Path As Needed -----"""
-MODEL_PATH = "saved_models/swing_up_1777060502/ppo_furuta_swing_up_14000000_steps.zip"
-HEADER_FILENAME = "policy_net.h"
+MODEL_PATH = "../rl/saved_models/swing_up_1777060502/ppo_furuta_swing_up_14000000_steps.zip"
+HEADER_FILEPATH = "../rl/exported_models/"
+HEADER_FILENAME = HEADER_FILEPATH + "policy_net.h"
 
 def export_weights_to_cpp():
     print(f"Loading model from {MODEL_PATH}...")
