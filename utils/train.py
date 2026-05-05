@@ -73,12 +73,19 @@ if __name__ == "__main__":
     parser.add_argument( "--mode", 
                         type=str, 
                         choices=["balance", "swing_up"], 
-                        default="balance", help="Training phase: 'balance' (Phase 1) or 'swing_up' (Phase 2)."
+                        default="balance",
+                        help="Training phase: 'balance' (Phase 1) or 'swing_up' (Phase 2)."
                         )
     parser.add_argument("--load_model_dir",
                         type=str,
                         default=None,
                         help="Directory of the saved Phase 1 model. REQUIRED when running in swing_up mode."
+                        )
+    parser.add_argument( "--num_cpus",
+                        type=int,
+                        choices=range(1,11),
+                        default=1,
+                        help="Number of cpu cores to use for training. 10 is reccomended, default is 1"
                         )
     args = parser.parse_args()
     
@@ -88,12 +95,12 @@ if __name__ == "__main__":
     
     print(f"--- Starting Training in {args.mode.upper()} Mode ---")
     
-    num_cpu = 10
+    num_cpus = args.num_cpus
     
-    vec_env = SubprocVecEnv([make_env(args.mode) for _ in range(num_cpu)])
+    vec_env = SubprocVecEnv([make_env(args.mode) for _ in range(num_cpus)])
     
     # 10,000,000 steps across all cpus
-    save_freq = 10_000_000 // num_cpu
+    save_freq = 10_000_000 // num_cpus
     
     checkpoint_callback = CheckpointCallback(save_freq=save_freq,
                                              save_path=MODEL_DIR,
@@ -119,7 +126,7 @@ if __name__ == "__main__":
                 )
         
     
-    print(f"Beginning Training on {num_cpu} cores...")
+    print(f"Beginning Training on {num_cpus} cores...")
     model.learn(total_timesteps=50_000_000,
                 callback=callback_list,
                 tb_log_name=f"PPO_{args.mode.capitalize()}_Single_{epoch_time}"
