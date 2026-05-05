@@ -140,9 +140,6 @@ class FurutaPendulumEnv(gym.Env):
         return np.clip(obs, -1.0, 1.0)
 
 
-    """
-    The current reward for balance works great for genertaing a robust pendulum balancer starting from the top position
-    """
     def _get_reward(self, raw_state, current, prev_current):
         rotor_pos, rotor_vel, pend_pos, pend_vel = raw_state
         
@@ -151,54 +148,39 @@ class FurutaPendulumEnv(gym.Env):
         distance_from_perfect_top = abs(pend_pos)
         
         effort_penalty = 0.001 * (current ** 2)
-            
         action_rate_penalty = 0.5 * ((current - prev_current) ** 2)
+        centering_penalty = 0.02 * (rotor_pos ** 2)
         
-        if self.mode == "balance":
-            centering_penalty = 0.05 * (rotor_pos ** 2)
-            near_top_multiplier = np.clip((np.cos(pend_pos) + 1.0) / 2.0, 0.0, 1.0)
-            vel_penalty = near_top_multiplier * (0.1 * (pend_vel ** 2) + 0.05 * (rotor_vel ** 2))
+        momentum_bonus = np.clip(0.1 * abs(pend_vel), 0.0, 0.8) # was 1.5
+        swing_base_vel_penalty = 0.05 * (rotor_vel ** 2)
+        catch_vel_penalty = 0.02 * (pend_vel ** 2) + 0.05 * (rotor_vel ** 2)
         
-            if distance_from_perfect_top < 0.006:
-                vel_penalty = 0.0
-                action_rate_penalty = 0.0
-            
-            total_reward = upright_reward - (vel_penalty + centering_penalty + effort_penalty + action_rate_penalty)
-            
-            return float(total_reward)
+        if distance_from_perfect_top > 0.6:
+            catch_weight = 0.0
+        elif distance_from_perfect_top < 0.2:
+            catch_weight = 1.0
+        else:
+            catch_weight = (1.2 - distance_from_perfect_top) / 1.0
         
-        elif self.mode == "swing_up":
-            centering_penalty = 0.01 * (rotor_pos ** 2)
+        swing_weight = 1.0 - catch_weight
+        
+        blended_momentum = momentum_bonus * swing_weight
+        blended_vel_penalty = (swing_base_vel_penalty * swing_weight) + (catch_vel_penalty * catch_weight)
+        
+        if catch_weight == 1.0:
+            self.consecutive_upright_steps += 1
+            self.catch_bonus = 3.0
+        else:
+            self.consecutive_upright_steps = 0
+            self.catch_bonus = 0.0
             
-            momentum_bonus = np.clip(0.1 * abs(pend_vel), 0.0, 0.8) # was 1.5
-            swing_base_vel_penalty = 0.05 * (rotor_vel ** 2)
-            
-            catch_vel_penalty = 0.02 * (pend_vel ** 2) + 0.05 * (rotor_vel ** 2)
-            
-            if distance_from_perfect_top > 0.6:
-                catch_weight = 0.0
-            elif distance_from_perfect_top < 0.2:
-                catch_weight = 1.0
-            else:
-                catch_weight = (1.2 - distance_from_perfect_top) / 1.0
-            
-            swing_weight = 1.0 - catch_weight
-            
-            blended_momentum = momentum_bonus * swing_weight
-            blended_vel_penalty = (swing_base_vel_penalty * swing_weight) + (catch_vel_penalty * catch_weight)
-            
-            if catch_weight == 1.0:
-                self.consecutive_upright_steps += 1
-                self.catch_bonus = 3.0
-            else:
-                self.consecutive_upright_steps = 0
-                self.catch_bonus = 0.0
-                
-            duration_bonus = 0.01 * self.consecutive_upright_steps
-            
-            total_reward = (upright_reward + self.catch_bonus + blended_momentum + duration_bonus) - (blended_vel_penalty + centering_penalty + effort_penalty + action_rate_penalty)
-            
-            return float(total_reward)
+        duration_bonus = 0.01 * self.consecutive_upright_steps
+        
+        total_reward = ((upright_reward + self.catch_bonus + blended_momentum + duration_bonus) - 
+                        (blended_vel_penalty + centering_penalty + effort_penalty + action_rate_penalty))
+        
+        return float(total_reward)
+    
 
     def _get_terminated(self, raw_state):
         """Ends the episode only for hardware safety reasons."""
