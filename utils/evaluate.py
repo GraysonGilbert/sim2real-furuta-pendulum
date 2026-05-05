@@ -24,7 +24,7 @@ def main():
         "--mode", 
         type=str, 
         choices=["balance", "swing_up"], 
-        default="balance",
+        default="swing_up",
         help="Choose the task mode: 'balance' or 'swing_up'. Default is 'balance'."
     )
     
