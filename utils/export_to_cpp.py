@@ -1,25 +1,18 @@
+import argparse
+import os
 import torch
 import numpy as np
 from stable_baselines3 import PPO
 
-"""----- Modify Model Path As Needed -----"""
-MODEL_PATH = "../rl/saved_models/swing_up_1777060502/ppo_furuta_swing_up_14000000_steps.zip"
-HEADER_FILEPATH = "../rl/exported_models/"
-HEADER_FILENAME = HEADER_FILEPATH + "policy_net.h"
 
-def export_weights_to_cpp():
-    print(f"Loading model from {MODEL_PATH}...")
-    model = PPO.load(MODEL_PATH, device="cpu")
+def export_weights_to_cpp(model_path, header_filename):
+    print(f"Loading model from {model_path}...")
+    model = PPO.load(model_path, device="cpu")
     
     # Extract the state dict from the PyTorch policy
     state_dict = model.policy.state_dict()
-    
-    # For SB3's default MlpPolicy, the Actor network consists of:
-    # 1. mlp_extractor.policy_net.0 (Linear Layer 1)
-    # 2. mlp_extractor.policy_net.2 (Linear Layer 2)
-    # 3. action_net (Final Output Layer)
-    
-    # Extract and transpose weights for easier C++ array indexing (Input x Output)
+       
+    # Extract and transpose weights for easier C++ array indexing
     w1 = state_dict['mlp_extractor.policy_net.0.weight'].numpy().T
     b1 = state_dict['mlp_extractor.policy_net.0.bias'].numpy()
     
@@ -30,7 +23,7 @@ def export_weights_to_cpp():
     b_out = state_dict['action_net.bias'].numpy()
 
     # Create the C++ Header File
-    with open(HEADER_FILENAME, 'w') as f:
+    with open(header_filename, 'w') as f:
         f.write("// Auto-generated PPO Policy Weights\n")
         f.write("#pragma once\n\n")
         f.write("#include <math.h>\n\n")
@@ -95,7 +88,39 @@ inline void compute_action(const float* obs, float* action) {
     }
 }
 """)
-    print(f"Successfully generated {HEADER_FILENAME}!")
+    print(f"Successfully generated {header_filename}!")
 
 if __name__ == "__main__":
-    export_weights_to_cpp()
+    parser = argparse.ArgumentParser(description="Export Stable Basleine3 PPO weights to a C++ header file.")
+    
+    # Model Argument
+    parser.add_argument(
+        "-m", "--model_name", 
+        type=str, 
+        required=True, 
+        help="Model filename or path relative to the '../rl/saved_models/' directory (e.g., 'swing_up_1777338929/ppo_furuta_swing_up_final.zip')"
+    )
+    
+    # Output Argument
+    parser.add_argument(
+        "-o", "--output", 
+        type=str, 
+        default="policy_net.h", 
+        help="Output header filename to be saved in '../rl/exported_models/' (default: 'policy_net.h')"
+    )
+    
+    args = parser.parse_args()
+
+    # Define base directories based on the project structure
+    MODEL_DIR = "../rl/saved_models/"
+    EXPORT_DIR = "../rl/exported_models/"
+    
+    # Ensure the export directory exists
+    os.makedirs(EXPORT_DIR, exist_ok=True)
+    
+    # Construct absolute or resolved paths
+    full_model_path = os.path.join(MODEL_DIR, args.model_name)
+    full_output_path = os.path.join(EXPORT_DIR, args.output)
+    
+    # Run the exporter
+    export_weights_to_cpp(full_model_path, full_output_path)
