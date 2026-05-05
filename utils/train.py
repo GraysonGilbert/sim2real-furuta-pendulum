@@ -92,8 +92,8 @@ if __name__ == "__main__":
     
     vec_env = SubprocVecEnv([make_env(args.mode) for _ in range(num_cpu)])
     
-    # 100,000 steps across all cpus
-    save_freq = 100_000 // num_cpu
+    # 10,000,000 steps across all cpus
+    save_freq = 10_000_000 // num_cpu
     
     checkpoint_callback = CheckpointCallback(save_freq=save_freq,
                                              save_path=MODEL_DIR,
@@ -103,40 +103,24 @@ if __name__ == "__main__":
     death_tracker = DeathTrackerCallback()
     callback_list = CallbackList([checkpoint_callback, death_tracker])
     
-    if args.mode == "balance":
-        print("Initializing new PPO model with random weights...")
-        model = PPO("MlpPolicy",
-                    vec_env,
-                    verbose=1,
-                    tensorboard_log=LOG_DIR,
-                    learning_rate=linear_schedule(0.0001),
-                    n_steps=2048,
-                    batch_size=2048,
-                    n_epochs=10, 
-                    ent_coef=0.005,
-                    clip_range=0.2,
-                    device="cpu"
-                    )
-    
-    elif args.mode == "swing_up":
         
-        print("Initializing new PPO model with random weights...")
-        model = PPO("MlpPolicy",
-                    vec_env,
-                    verbose=1,
-                    tensorboard_log=LOG_DIR,
-                    learning_rate=linear_schedule(0.0003),
-                    n_steps=2048,
-                    batch_size=2048,
-                    n_epochs=10,
-                    ent_coef=0.03,
-                    clip_range=0.2,
-                    device="cpu"
-                    )
+    print("Initializing new PPO model with random weights...")
+    model = PPO("MlpPolicy",
+                vec_env,
+                verbose=1,
+                tensorboard_log=LOG_DIR,
+                learning_rate=linear_schedule(0.0003),
+                n_steps=2048,
+                batch_size=2048,
+                n_epochs=10,
+                ent_coef=0.03,
+                clip_range=0.2,
+                device="cpu"
+                )
         
     
     print(f"Beginning Training on {num_cpu} cores...")
-    model.learn(total_timesteps=20_000_000,
+    model.learn(total_timesteps=50_000_000,
                 callback=callback_list,
                 tb_log_name=f"PPO_{args.mode.capitalize()}_Single_{epoch_time}"
                 )
