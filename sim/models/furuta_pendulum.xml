@@ -42,7 +42,7 @@
   </worldbody>
 
   <actuator>
-    <motor name="arm_motor" joint="rotor_joint" gear="0.353" ctrlrange="-1.5 1.5" ctrllimited="true"/>
+    <motor name="arm_motor" joint="rotor_joint" gear="0.306" ctrlrange="-1.5 1.5" ctrllimited="true"/>
   </actuator>
 
   <sensor>
@@ -52,6 +52,5 @@
     <jointpos name="pendulum_angle" joint="pendulum_joint"/>
     <jointvel name="pendulum_vel" joint="pendulum_joint"/>
   </sensor>
-
 
 </mujoco>
