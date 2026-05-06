@@ -1,5 +1,6 @@
 .venv/
 rl/logs/*
-rl/saved_models/*
+rl/saved_models/swing_up*
+rl/saved_models/balance*
 envs/__pycache__/*
 sim/hw_sim_debug/*
