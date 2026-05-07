@@ -62,7 +62,8 @@ RUN pip install --no-cache-dir --break-system-packages \
     numpy \
     imageio \
     pandas \
-    matplotlib
+    matplotlib \
+    tensorboard==2.20.0
 
 # ----------------------------------------------
 # LEAVE UNCOMMENTED IF MACHINE HAS NVIDIA GPU
