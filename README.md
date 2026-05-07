@@ -143,6 +143,14 @@ cd utils/
 # Use --help for information about the various CLI arguments
 
 python3 train.py --mode swing_up --num_cpus 10 # Note 10 cores specified
+
+```
+
+```shell
+# View Tensorboard logs in a browser while training a model
+# In a separate terminal (if running in container, terminal must be in a container as well) run
+
+tensorboard --logdir ./rl/logs/
 ```
 
 ### **2. Evaluate Model**
