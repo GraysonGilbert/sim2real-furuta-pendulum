@@ -78,7 +78,7 @@ def main():
     # 3. Reset the environment to get the initial observation
     obs, info = env.reset()
 
-    print("\nLaunching MuJoCo Viewer. Press ESC to exit.")
+    print("\nLaunching MuJoCo Viewer. Press QUIT to exit.")
     
     with open(BASE_SIM_FILEPATH + 'hw_sim_debug/sim_debug_data.csv', mode='w', newline='') as log_file:
         csv_writer = csv.writer(log_file)
