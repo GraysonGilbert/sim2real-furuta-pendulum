@@ -129,7 +129,7 @@ if __name__ == "__main__":
     print(f"Beginning Training on {num_cpus} cores...")
     model.learn(total_timesteps=50_000_000,
                 callback=callback_list,
-                tb_log_name=f"PPO_{args.mode.capitalize()}_Single_{epoch_time}"
+                tb_log_name=f"PPO_{args.mode.capitalize()}_{epoch_time}"
                 )
     
     model.save(f"{MODEL_DIR}/ppo_furuta_{args.mode}_final")
