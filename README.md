@@ -142,7 +142,7 @@ cd utils/
 #
 # Use --help for information about the various CLI arguments
 
-python3 train.py --mode swing_up --num_cpus=10 # Note 10 cores specified
+python3 train.py --mode swing_up --num_cpus 10 # Note 10 cores specified
 ```
 
 ### **2. Evaluate Model**
