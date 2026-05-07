@@ -23,7 +23,9 @@
 
 
 ## **Overview**
-This project aims to bridge the gap between high-fidelity physics based simulation and physical hardware by developing a robust Proximal Policy Optimization (PPO) based controller for a furuta pendulum. The project trains an agent that can repeatedly swing up and balance a pendulum, while handling the noise, friction, and non-linearities of the real world. This was achieved through simulation using MuJoCo before being transferred to a physial furuta pendulum.
+This project bridges the gap between high-fidelity physics based simulation and physical hardware by developing a robust Proximal Policy Optimization (PPO) based controller for a furuta pendulum. The project trains an agent that can repeatedly swing up and balance a pendulum, while handling the noise, friction, and non-linearities of the real world. This was achieved through simulation using MuJoCo before being transferred to an ESP32 onboard the physical furuta pendulum. The resulting model is capable of balancing a pendulum for over an hour continuously (upper limit not found), and is robust to external input forces.
+
+<img src="./demos/Timelapse.png" alt="Description" width="1000"/>
 
 ---
 
