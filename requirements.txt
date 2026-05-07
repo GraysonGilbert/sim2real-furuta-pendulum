@@ -1,0 +1,10 @@
+--extra-index-url https://download.pytorch.org/whl/cu124
+
+torch
+mujoco==3.6.0
+gymnasium[robotics]==1.2.3
+stable-baselines3==2.8.0
+numpy
+imageio
+pandas
+matplotlib
