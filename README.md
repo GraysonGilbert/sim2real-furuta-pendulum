@@ -148,6 +148,7 @@ python3 train.py --mode swing_up --num_cpus 10 # Note 10 cores specified
 
 ```shell
 # View Tensorboard logs in a browser while training a model
+#
 # In a separate terminal (if running in container, terminal must be in a container as well) run the following
 # from the sim2real-furuta-pendulum/ directory
 
