@@ -67,6 +67,7 @@ docker build -t furuta-sim-env .
 # Nvidia GPU accelerated docker container
 #
 # Create docker container from image [Deletes container after exit]
+xhost +local:docker
 docker run -it --rm \
     --gpus all \
     --device /dev/dri:/dev/dri \
@@ -82,6 +83,7 @@ docker run -it --rm \
 # Nvidia GPU accelerated docker container
 #
 # Create docker container from image [Keeps container after exit]
+xhost +local:docker
 docker run -it \
     --name=mujoco-container
     --gpus all \
@@ -103,7 +105,8 @@ docker build -t furuta-sim-env-cpu-only .
 ```
 ```shell
 ### CPU only mode
-    docker run -it --rm \
+xhost +local:docker
+docker run -it --rm \
     --net=host \
     -e DISPLAY=$DISPLAY \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
